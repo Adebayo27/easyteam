@@ -1,0 +1,39 @@
+{
+  "development": {
+    "username": "adekoya.adebayojubril",
+    "password": "QjM1JYu3ltRn",
+    "database": "easy_team",
+    "host": "ep-small-bonus-67949136.us-east-1.aws.neon.tech",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": true
+    }
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "wherecargo",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "dialectOptions": {
+      "ssl": true
+    }
+  },
+  "production": {
+    "username": "wherecargo-dev_owner",
+    "password": "mbSKO0PTIrh3",
+    "database": "wherecargo-prod",
+    "host": "ep-proud-cell-a5doqxll.us-east-2.aws.neon.tech",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": true
+    }
+  },
+  "developmentL": {
+    "username": "root",
+    "password": null,
+    "database": "wherecargo",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
