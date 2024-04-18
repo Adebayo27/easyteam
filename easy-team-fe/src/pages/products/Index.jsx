@@ -14,18 +14,14 @@ import {
   DatePicker,
   AppProvider,
   IndexFilters,
-  useBreakpoints,
   RangeSlider,
   ChoiceList,
   useSetIndexFiltersMode,
-  Badge,
   Select,
 } from "@shopify/polaris";
 import enTranslations from "@shopify/polaris/locales/en.json";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { baseUrl } from "../../../utils/baseUrl";
-import Filter from "../../components/filter/Index";
-import Modal from "../../components/modal/Index";
+import { baseUrl, handleCallApiGet, handleCallApiPost } from "../../../utils/baseUrl";
 import Order from "../../components/order/Index";
 import Table from "../../components/table/Index";
 
@@ -41,13 +37,10 @@ export const Index = () => {
   });
   const [open, setOpen] = useState(false);
   const [result, setResult] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [applyCommissionAll, setApplyCommissionAll] = useState(0);
   const [filterProducts, setFilterProducts] = useState("");
   const [queryValue, setQueryValue] = useState("");
-  const [active, setActive] = useState(false);
-  const [productModal, setProductModal] = useState(false);
   const [orders, setOrders] = useState([]);
   const [staffs, setStaffs] = useState([]);
   const [name, setName] = useState("");
@@ -68,26 +61,28 @@ export const Index = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`${baseUrl}/products`);
-      const data = await response.json();
-      setProducts(data?.product);
+      const data = await handleCallApiGet('products') 
+      if(data !== null){
+        setProducts(data?.product);
+      }
+      
     } catch (error) {
       console.error("Error fetching products", error);
     }
   };
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`${baseUrl}/orders`);
-      const data = await response.json();
-      setOrders(data?.orders);
+      const data = await handleCallApiGet('orders') 
+      if(data !== null){
+        setOrders(data?.orders);
+      }
     } catch (error) {
       console.error("Error fetching products", error);
     }
   };
   const fetchStaffs = async () => {
     try {
-      const response = await fetch(`${baseUrl}/staffs`);
-      const data = await response.json();
+      const data = await handleCallApiGet('staffs')
       const users = data?.users;
       const options = [];
       users.map((e) => {
@@ -97,7 +92,7 @@ export const Index = () => {
         };
         options.push(option);
       });
-      console.log(options);
+     
       setStaffs(options);
     } catch (error) {
       console.error("Error fetching staffs", error);
@@ -140,24 +135,16 @@ export const Index = () => {
         productIds: selectedProductIds,
       };
 
-      fetch(`${baseUrl}/commission/apply`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setApplyCommissionAll("");
-          handleSelectionChange([]);
-          clearSelection();
-          fetchProducts();
-          setTimeout(() => {
-            alert("Commission updated successfully");
-          }, 1000);
-        })
-        .catch((error) => {});
+      const response = await handleCallApiPost('commission/apply', data);
+      if(response !== null){
+        setApplyCommissionAll("");
+        handleSelectionChange([]);
+        clearSelection();
+        fetchProducts();
+        setTimeout(() => {
+          alert("Commission updated successfully");
+        }, 1000);
+      }
     } catch (error) {}
   };
 
@@ -168,19 +155,12 @@ export const Index = () => {
         productIds: selectedProductIds,
       };
 
-      fetch(`${baseUrl}/product/delete`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          fetchProducts();
-          filterOrderByCommissionHandler()
-        })
-        .catch((error) => {});
+      const response = await handleCallApiPost('product/delete', data);
+      if(response !== null){
+        fetchProducts();
+        filterOrderByCommissionHandler();
+      }
+     
     } catch (error) {}
   };
 
@@ -196,24 +176,14 @@ export const Index = () => {
         startDate: new Date(date.start).toISOString(),
         endDate: new Date(date.end).toISOString(),
       };
-      fetch(`${baseUrl}/commission/calculate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setResult(data);
+
+      const response = await handleCallApiPost('commission/calculate', data);
+      if(response !== null){
+        setResult(response);
           setLoading(false);
           handleSelectionChange([]);
-          // fetchProducts();
-        })
-        .catch((error) => {
-          setLoading(false);
-          setError(error.message);
-        });
+      }
+      
     } catch (error) {
       setLoading(false);
     }
@@ -236,7 +206,6 @@ export const Index = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          setActive(false);
           setStaffMember("");
           setApplyCommissionAll("");
           clearSelection();
@@ -283,12 +252,10 @@ export const Index = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          setActive(false);
           setName("");
           setCategory("");
           setPrice("");
           setCommissionPercentage("");
-          setProductModal(false);
           fetchProducts();
           setTimeout(() => {
             alert(data.message);
@@ -310,29 +277,14 @@ export const Index = () => {
         price: price,
         commission: commission,
       };
+      const response = await handleCallApiPost(`product/${id}`, data);
 
-      fetch(`${baseUrl}/product/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
     } catch (error) {
       console.error("Error fetching products", error);
     }
   };
 
   const handleToggle = useCallback(() => setOpen((open) => !open), []);
-
-  const handleSubmit = () => {};
 
   const [itemStrings, setItemStrings] = useState([
     `Included ${selectedResources.length} `,
@@ -542,7 +494,11 @@ export const Index = () => {
                 ]}
               >
                 {result.orders.map((order, index) => {
-                  return order?.Product && <Order key={index} product={order.Product} />;
+                  return (
+                    order?.Product && (
+                      <Order key={index} product={order.Product} />
+                    )
+                  );
                 })}
               </IndexTable>
               <div style={{ height: "20px" }}></div>
@@ -567,7 +523,7 @@ export const Index = () => {
               </IndexTable>
             </span>
           )}
-          <Form onSubmit={handleSubmit}>
+          <Form>
             <FormLayout>
               <Select
                 label="Staffs"

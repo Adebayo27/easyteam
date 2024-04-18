@@ -7,7 +7,7 @@ This project is a commission plan simulator built using [Next.js](https://nextjs
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/Adebayo
+    git clone https://github.com/Adebayo/easyteam.git
     ```
 
 2. Navigate to the frontend directory:

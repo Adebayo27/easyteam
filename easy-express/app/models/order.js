@@ -10,7 +10,6 @@ module.exports = (sequelize, Sequelize) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    // Model attributes are defined here
     productId: {
       type: Sequelize.INTEGER,
       allowNull: false,
@@ -39,3 +38,6 @@ module.exports = (sequelize, Sequelize) => {
 
   return Order;
 };
+
+
+
