@@ -178,6 +178,7 @@ export const Index = () => {
         .then((response) => response.json())
         .then((data) => {
           fetchProducts();
+          filterOrderByCommissionHandler()
         })
         .catch((error) => {});
     } catch (error) {}
