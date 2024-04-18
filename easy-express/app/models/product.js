@@ -2,6 +2,43 @@
 const {
   Model
 } = require('sequelize');
+// module.exports = (sequelize, Sequelize) => {
+//   const Product = sequelize.define("Product", {
+//     id: {
+//       type: Sequelize.INTEGER,
+//       autoIncrement: true,
+//       primaryKey: true,
+//     },
+//     name: {
+//       type: Sequelize.STRING,
+//       allowNull: false,
+//     },
+//     category: {
+//       type: Sequelize.STRING,
+//       allowNull: false,
+//     },
+//     price: {
+//       type: Sequelize.DOUBLE,
+//       allowNull: false,
+//     },
+//     commission: {
+//       type: Sequelize.DOUBLE,
+//       allowNull: false,
+//     },
+//   });
+
+//   // sequelize.sync({ alter: true })
+//   // sequelize.sync()
+
+//   // User.prototype.toJSON = function () {
+//   //   const values = Object.assign({}, this.get());
+  
+//   //   delete values.password;
+//   //   return values;
+//   // };
+
+//   return Product;
+// };
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
     /**
@@ -21,6 +58,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Product',
+    paranoid: true
   });
   return Product;
 };

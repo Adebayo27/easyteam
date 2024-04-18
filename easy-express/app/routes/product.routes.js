@@ -3,6 +3,7 @@ module.exports = app => {
   
     var router = require("express").Router();
     router.get("/products", product.getAllProducts);
+    router.post("/product/delete", product.deleteProduct);
     router.post("/product/:productId", product.updateProduct);
     
     router.get("/seed-products", product.seedProductWithFakeData);

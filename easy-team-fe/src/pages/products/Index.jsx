@@ -9,7 +9,6 @@ import {
   BlockStack,
   Collapsible,
   Button,
-  TextContainer,
   Form,
   FormLayout,
   DatePicker,
@@ -157,6 +156,28 @@ export const Index = () => {
           setTimeout(() => {
             alert("Commission updated successfully");
           }, 1000);
+        })
+        .catch((error) => {});
+    } catch (error) {}
+  };
+
+  const handleBulkActionDelete = async () => {
+    try {
+      const selectedProductIds = selectedResources;
+      const data = {
+        productIds: selectedProductIds,
+      };
+
+      fetch(`${baseUrl}/product/delete`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          fetchProducts();
         })
         .catch((error) => {});
     } catch (error) {}
@@ -467,7 +488,6 @@ export const Index = () => {
                     price,
                     commission: e.target.value,
                   });
-                  // console.log('changed ', e.target.value)
                 }}
               />
             </span>
@@ -542,60 +562,60 @@ export const Index = () => {
           </div>
           <Text as={"span"}>Order Total : {orders.length}</Text>
         </div>
-        
+
         <Collapsible
           open={open}
           id="basic-collapsible"
           transition={{ duration: "500ms", timingFunction: "ease-in-out" }}
           expandOnPrint
-        >   
-            {result && (
-          <BlockStack>
-            {" "}
-            <Text>
-              Total commission Base on Orders: {result.totalCommission}
-            </Text>{" "}
-          </BlockStack>
-        )}
-        {result && result?.orders?.length > 0 && (
-          <span>
-            Orders for {`${result.user?.firstName} ${result.user?.lastName}`} | Total: {result.orders.length}
-            <IndexTable
-                  itemCount={result.orders.length}
-                  headings={[
-                    { title: "Name" },
-                    { title: "Price" },
-                    { title: "Commission" },
-                    { title: "Total"},
-                  ]}
-                >
-                    {result.orders.map((order, index) => {
-                        return <Order key={index} product={order.Product} />
-                    })}
-                  
-                </IndexTable>
-                <div style={{height: '20px'}}></div>
-                <IndexTable
-                  itemCount={Object.keys(result.earningsByDate).length}
-                  headings={[
-                    { title: "Day" },
-                    { title: "Earnings" },
-                    { title: "SalesCount" },
-                  ]}
-                >
-                    {Object.keys(result.earningsByDate).map((day, index) => {
-                        const data = result.earningsByDate[day]
-                        return <IndexTable.Row key={index}>
-                            <IndexTable.Cell>{day}</IndexTable.Cell>
-                            <IndexTable.Cell>{data.earnings}</IndexTable.Cell>
-                            <IndexTable.Cell>{data.salesCount}</IndexTable.Cell>
-                           
-                        </IndexTable.Row>
-                    })}
-                  
-                </IndexTable>
-          </span>
-        )}
+        >
+          {result && (
+            <BlockStack>
+              {" "}
+              <Text>
+                Total commission Base on Orders: {result.totalCommission}
+              </Text>{" "}
+            </BlockStack>
+          )}
+          {result && result?.orders?.length > 0 && (
+            <span>
+              Orders for {`${result.user?.firstName} ${result.user?.lastName}`}{" "}
+              | Total: {result.orders.length}
+              <IndexTable
+                itemCount={result.orders.length}
+                headings={[
+                  { title: "Name" },
+                  { title: "Price" },
+                  { title: "Commission" },
+                  { title: "Total" },
+                ]}
+              >
+                {result.orders.map((order, index) => {
+                  return order?.Product && <Order key={index} product={order.Product} />;
+                })}
+              </IndexTable>
+              <div style={{ height: "20px" }}></div>
+              <IndexTable
+                itemCount={Object.keys(result.earningsByDate).length}
+                headings={[
+                  { title: "Day" },
+                  { title: "Earnings" },
+                  { title: "SalesCount" },
+                ]}
+              >
+                {Object.keys(result.earningsByDate).map((day, index) => {
+                  const data = result.earningsByDate[day];
+                  return (
+                    <IndexTable.Row key={index}>
+                      <IndexTable.Cell>{day}</IndexTable.Cell>
+                      <IndexTable.Cell>{data.earnings}</IndexTable.Cell>
+                      <IndexTable.Cell>{data.salesCount}</IndexTable.Cell>
+                    </IndexTable.Row>
+                  );
+                })}
+              </IndexTable>
+            </span>
+          )}
           <Form onSubmit={handleSubmit}>
             <FormLayout>
               <Select
@@ -604,12 +624,7 @@ export const Index = () => {
                 onChange={handleSelectChange}
                 value={selectedStaff}
               />
-              {/* <TextField
-                                value={staffMember}
-                                onChange={(value) => setStaffMember(value)}
-                                label="Staff Member"
-                                autoComplete="staffMember"
-                            /> */}
+
               <DatePicker
                 month={new Date().getMonth()}
                 year={new Date().getFullYear()}
@@ -636,6 +651,7 @@ export const Index = () => {
               <span className="width-20 mr-10">
                 <TextField
                   placeholder="set commission for products"
+                  type="number"
                   value={applyCommissionAll}
                   onChange={(value) => setApplyCommissionAll(value)}
                 />
@@ -648,15 +664,17 @@ export const Index = () => {
                   Apply to selected products
                 </Button>
               </span>
-              
-              {/* <span>
-                <Button
-                  variant="secondary"
-                  onClick={() => setProductModal(true)}
-                >
-                  Add new product
-                </Button>
-              </span> */}
+              {selectedResources.length > 0 && (
+                <span>
+                  <Button
+                    variant="secondary"
+                    tone="critical"
+                    onClick={handleBulkActionDelete}
+                  >
+                    Delete product
+                  </Button>
+                </span>
+              )}
             </div>
             <div>
               <IndexFilters

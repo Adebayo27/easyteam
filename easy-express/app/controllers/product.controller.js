@@ -75,6 +75,28 @@ exports.createProduct = async (req, res) => {
     }
   };
 
+  exports.deleteProduct = async (req, res) => {
+    try {
+        const { productIds } = req.body;
+
+        for (let i = 0; i < productIds.length; i++) {
+            console.log(productIds[i])
+            const id = productIds[i];
+            const product = await Product.destroy({
+                where: {
+                    id: Number(id)
+                }
+            });
+            console.log(product)
+        }
+        return res.json({ message: 'Product deleted successfully' });
+    } catch (error) {
+        res.status(500).send({
+            message: err.message || "Some error occurred",
+        });
+    }
+}
+
 exports.seedProductWithFakeData = async (req, res) => {
   try {
     // // seed 20 staffs

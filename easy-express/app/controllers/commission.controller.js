@@ -114,7 +114,11 @@ exports.calculateCommissions = async (req, res) => {
     // Group sales by createdAt timestamp
     orders.forEach(sale => {
         const date = sale.createdAt?.toISOString().split('T')[0]; // Extract date part from timestamp
-        const earnings = sale.Product.price * (sale.Product.commission / 100); // Calculate earnings for this sale
+        let earnings = 0;
+        if(sale.Product !== null){
+            earnings = sale?.Product?.price * (sale?.Product?.commission / 100);
+        }
+         // Calculate earnings for this sale
         if (earningsByDate[date]) {
             earningsByDate[date].earnings += earnings; // Add earnings to existing total for this date
             earningsByDate[date].salesCount++;
@@ -131,7 +135,7 @@ exports.calculateCommissions = async (req, res) => {
 
     let totalCommission = 0;
     orders.forEach(order => {
-        totalCommission += (order.Product.price * (order.Product.commission / 100));
+        totalCommission += (order?.Product?.price * (order?.Product?.commission / 100));
     });
 
     res.send({ status: true, totalCommission, user, orders, groupedOrders, earningsByDate});
