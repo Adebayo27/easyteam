@@ -500,56 +500,6 @@ export const Index = () => {
 
   return (
     <AppProvider i18n={enTranslations}>
-      <Modal
-        title="Add Staff Order"
-        content="Save"
-        active={active}
-        setActive={setActive}
-        actionHandler={staffOrderHandler}
-        staffMember={staffMember}
-        setStaffMember={setStaffMember}
-      >
-        <TextField
-          label="Staff name"
-          value={staffMember}
-          onChange={(value) => setStaffMember(value)}
-          autoComplete="off"
-        />
-      </Modal>
-      <Modal
-        title="Add Product"
-        content="Save Product"
-        active={productModal}
-        setActive={setProductModal}
-        actionHandler={addProductHandler}
-      >
-        <div>
-          <div className="mb-10">
-            <TextField
-              label="Product name"
-              value={name}
-              onChange={(value) => setName(value)}
-              autoComplete="off"
-            />
-          </div>
-          <div className="mb-10">
-            <TextField
-              label="category"
-              value={category}
-              onChange={(value) => setCategory(value)}
-              autoComplete="off"
-            />
-          </div>
-          <div className="mb-10">
-            <TextField
-              label="price"
-              value={price}
-              onChange={(value) => setPrice(value)}
-              autoComplete="off"
-            />
-          </div>
-        </div>
-      </Modal>
       <BlockStack vertical="true">
         <div className="flex">
           <div className="mr-10">
