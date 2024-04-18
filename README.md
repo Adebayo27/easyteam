@@ -1,6 +1,6 @@
 # Frontend README
 
-This project is a commission plan simulator built using [Next.js](https://nextjs.org/) and [Shopify Polaris](https://polaris.shopify.com/) for the UI components.
+This project is a commission plan simulator built using [Next.js](https://nextjs.org/) and [Shopify Polaris](https://polaris.shopify.com/) for the UI components .
 
 ## Getting Started Frontend
 
