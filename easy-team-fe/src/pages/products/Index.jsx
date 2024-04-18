@@ -649,14 +649,14 @@ export const Index = () => {
                 </Button>
               </span>
               
-              <span>
+              {/* <span>
                 <Button
                   variant="secondary"
                   onClick={() => setProductModal(true)}
                 >
                   Add new product
                 </Button>
-              </span>
+              </span> */}
             </div>
             <div>
               <IndexFilters
